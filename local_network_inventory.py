@@ -46,6 +46,13 @@ class LocalNetworkInventory(object):
       action="store",
       help="Get all the variables about a specific instance"
     )
+    parser.add_argument(
+      "--connect-address",
+      metavar="ADDR",
+      action="store",
+      default="whiskerlabs.com",
+      help="A hostname or IP address to use in determining localhost's public IP"
+    )
     self.args = parser.parse_args()
 
 
@@ -63,7 +70,7 @@ class LocalNetworkInventory(object):
   def get_local_routing_prefix(self):
     """Computes the local network routing prefix in CIDR notation."""
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.connect(("whiskerlabs.com", 80))
+    sock.connect((self.args.connect_address, 80))
     localhost_ip = sock.getsockname()[0]
     sock.close()
     octet_strs = localhost_ip.split('.')[:3]
